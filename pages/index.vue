@@ -2,30 +2,49 @@
   <v-app>
     <v-main>
       <v-container>
-        <v-card elevation="2" class="mx-auto" max-width="344" tile>
+        <v-card elevation="2" class="mx-auto" max-width="344" shaped>
+          <v-card-title>Ma To Do List</v-card-title>
           <v-list dense>
             <v-list-item-group>
               <!-- Pour chaque task dans mon tableau de tasks[] // On l'a appelé task, mais on aurait pu l'appeler tache-->
               <v-list-item v-for="(task, index) in tasks" :key="index">
                 <v-list-item-content>
-                  <v-list-item-title
-                    >{{ task }}
-                    <v-list-item-icon>
-                      <v-icon color="red" @click="removeTask(index)"
-                        >mdi-delete</v-icon
-                      >
-                    </v-list-item-icon>
-                  </v-list-item-title>
+                  <v-list-item-title>{{ task.name }} </v-list-item-title>
+                  <v-list-item-subtitle>{{
+                    task.description
+                  }}</v-list-item-subtitle>
                 </v-list-item-content>
+                <v-card-actions>
+                  <v-btn
+                    rounded
+                    color="light-green"
+                    dark
+                    @click.stop="edit = true"
+                  >
+                    <v-icon color="orange" right>mdi-pencil</v-icon>
+                  </v-btn>
+                </v-card-actions>
+                <v-icon color="red" right @click="removeTask(index)"
+                  >mdi-delete</v-icon
+                >
               </v-list-item>
             </v-list-item-group>
           </v-list>
           <v-card-actions>
-            <v-btn rounded color="light-green" dark @click.stop="dialog = true">
-              Ajouter une tâche
-            </v-btn>
+            <v-row justify="center">
+              <v-btn
+                rounded
+                color="light-green"
+                dark
+                @click.stop="dialog = true"
+              >
+                Ajouter une tâche
+              </v-btn>
+            </v-row>
           </v-card-actions>
-          <v-dialog v-model="dialog" max-width="290">
+
+          <!-- Création tâches-->
+          <v-dialog v-model="dialog" max-width="400">
             <v-card>
               <v-card-title>Mon formulaire</v-card-title>
               <v-form>
@@ -63,6 +82,71 @@
               </v-card-actions>
             </v-card>
           </v-dialog>
+
+          <!-- Modification tâches-->
+          <v-dialog v-model="edit" max-width="400">
+            <v-card>
+              <v-card-title>Modifier mon formulaire</v-card-title>
+              <v-form>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12">
+                      <v-text-field
+                        v-model="taskNameEdit"
+                        label="Modif nom de la tâche"
+                        :counter="100"
+                        required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12">
+                      <v-text-field
+                        v-model="taskDescriptionEdit"
+                        label="Modif description de la tâche"
+                        :counter="200"
+                        required
+                      ></v-text-field>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-form>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+
+                <v-btn color="green darken-1" text @click="edit = false">
+                  Annuler
+                </v-btn>
+
+                <v-btn color="green darken-1" text @click="editTask">
+                  Enregistrer les modifications
+                </v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+
+          <!-- Message tâche enregistrée-->
+          <v-snackbar v-model="saveMsg" :timeout="timeout">
+            Votre tâche est bien enregistrée
+            <template v-slot:action="{ attrs }">
+              <v-btn color="blue" text v-bind="attrs" @click="saveMsg = false">
+                Fermer
+              </v-btn>
+            </template>
+          </v-snackbar>
+
+          <!-- Message tâche supprimée-->
+          <v-snackbar v-model="deleteMsg" :timeout="timeout">
+            Votre tâche est bien supprimée
+            <template v-slot:action="{ attrs }">
+              <v-btn
+                color="blue"
+                text
+                v-bind="attrs"
+                @click="deleteMsg = false"
+              >
+                Fermer
+              </v-btn>
+            </template>
+          </v-snackbar>
         </v-card>
       </v-container>
     </v-main>
@@ -79,6 +163,8 @@ export default {
       taskName: "",
       taskDescription: "",
       tasks: [],
+      saveMsg: false,
+      deleteMsg: false,
     };
   },
 
@@ -98,13 +184,24 @@ export default {
       // 1:
       // ]
 
-      this.tasks.push(this.taskName);
+      const completeTask = {
+        name: this.taskName,
+        description: this.taskDescription,
+      };
+
+      this.tasks.push(completeTask);
       this.dialog = false;
       this.taskName = "";
+      this.saveMsg = true;
+    },
+
+    editTask() {
+      this.tasks[index].name.splice();
     },
 
     removeTask(index) {
       this.tasks.splice(index, 1);
+      this.deleteMsg = true;
     },
   },
 };
