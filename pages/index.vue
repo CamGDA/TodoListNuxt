@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <v-container>
+      <v-container class="mt-10">
         <v-card elevation="2" class="mx-auto" max-width="344" shaped>
           <v-card-title>Ma To Do List</v-card-title>
           <v-list dense>
@@ -9,15 +9,18 @@
               <!-- Pour chaque task dans mon tableau de tasks[] // On l'a appelé task, mais on aurait pu l'appeler tache-->
               <v-list-item v-for="(task, index) in tasks" :key="index">
                 <v-list-item-content>
-                  <v-list-item-title>{{ task.name }} </v-list-item-title>
+                  <v-list-item-title class="font-weight-black">{{ task.name }} </v-list-item-title>
                   <v-list-item-subtitle>{{
                     task.description
                   }}</v-list-item-subtitle>
                 </v-list-item-content>
                 <v-card-actions>
+                  <v-checkbox
+                    color="success"
+                    class="mt-5"
+                  ></v-checkbox>
                   <v-btn icon
                     rounded
-                    color="light-green"
                     dark
                     @click="edit = true"
                   >
@@ -30,7 +33,7 @@
               </v-list-item>
             </v-list-item-group>
           </v-list>
-          <v-card-actions>
+          <v-card-actions class="mt-10">
             <v-row justify="center">
               <v-btn
                 rounded
@@ -49,8 +52,8 @@
               <v-card-title>Mon formulaire</v-card-title>
               <v-form>
                 <v-container>
-                  <v-row>
-                    <v-col cols="12">
+                  <v-row justify="center">
+                    <v-col cols="10">
                       <v-text-field
                         v-model="taskName"
                         label="Nom de la tâche"
@@ -58,7 +61,7 @@
                         required
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12">
+                    <v-col cols="10" justify="center">
                       <v-text-field
                         v-model="taskDescription"
                         label="Description de la tâche"
@@ -69,10 +72,10 @@
                   </v-row>
                 </v-container>
               </v-form>
-              <v-card-actions>
+              <v-card-actions class="mt-10">
                 <v-spacer></v-spacer>
 
-                <v-btn color="green darken-1" text @click="dialog = false">
+                <v-btn color="red darken-1" text @click="dialog = false">
                   Annuler
                 </v-btn>
 
@@ -89,8 +92,8 @@
               <v-card-title>Modifier mon formulaire</v-card-title>
               <v-form>
                 <v-container>
-                  <v-row>
-                    <v-col cols="12">
+                  <v-row justify="center">
+                    <v-col cols="10">
                       <v-text-field
                         v-model="taskNameEdit"
                         label="Nom de la tâche"
@@ -98,7 +101,7 @@
                         required
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12">
+                    <v-col cols="10" justify="center">
                       <v-text-field
                         v-model="taskDescriptionEdit"
                         label="Description de la tâche"
@@ -109,10 +112,10 @@
                   </v-row>
                 </v-container>
               </v-form>
-              <v-card-actions>
+              <v-card-actions class="mt-10">
                 <v-spacer></v-spacer>
 
-                <v-btn color="green darken-1" text @click="edit = false">
+                <v-btn color="red darken-1" text @click="edit = false">
                   Annuler
                 </v-btn>
 
@@ -162,7 +165,6 @@
               </v-btn>
             </template>
           </v-snackbar>
-
         </v-card>
       </v-container>
     </v-main>
@@ -218,6 +220,7 @@ export default {
 
     editTask(index) {
       this.tasks.splice(index, 1);
+
       const editTask = {
         name: this.taskNameEdit,
         description: this.taskDescriptionEdit,
