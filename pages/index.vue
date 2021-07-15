@@ -15,11 +15,11 @@
                   }}</v-list-item-subtitle>
                 </v-list-item-content>
                 <v-card-actions>
-                  <v-btn
+                  <v-btn icon
                     rounded
                     color="light-green"
                     dark
-                    @click.stop="edit = true"
+                    @click="edit = true"
                   >
                     <v-icon color="orange" right>mdi-pencil</v-icon>
                   </v-btn>
@@ -93,7 +93,7 @@
                     <v-col cols="12">
                       <v-text-field
                         v-model="taskNameEdit"
-                        label="Modif nom de la tâche"
+                        label="Nom de la tâche"
                         :counter="100"
                         required
                       ></v-text-field>
@@ -101,7 +101,7 @@
                     <v-col cols="12">
                       <v-text-field
                         v-model="taskDescriptionEdit"
-                        label="Modif description de la tâche"
+                        label="Description de la tâche"
                         :counter="200"
                         required
                       ></v-text-field>
@@ -116,8 +116,8 @@
                   Annuler
                 </v-btn>
 
-                <v-btn color="green darken-1" text @click="editTask">
-                  Enregistrer les modifications
+                <v-btn color="green darken-1" text @click="editTask(index)">
+                  Enregistrer
                 </v-btn>
               </v-card-actions>
             </v-card>
@@ -147,6 +147,22 @@
               </v-btn>
             </template>
           </v-snackbar>
+
+          <!-- Message tâche modifiée-->
+          <v-snackbar v-model="editMsg" :timeout="timeout">
+            Votre tâche est bien supprimée
+            <template v-slot:action="{ attrs }">
+              <v-btn
+                color="blue"
+                text
+                v-bind="attrs"
+                @click="editeMsg = false"
+              >
+                Fermer
+              </v-btn>
+            </template>
+          </v-snackbar>
+
         </v-card>
       </v-container>
     </v-main>
@@ -165,6 +181,10 @@ export default {
       tasks: [],
       saveMsg: false,
       deleteMsg: false,
+      editMsg: false,
+      edit: false,
+      taskNameEdit: "",
+      taskDescriptionEdit: "",
     };
   },
 
@@ -192,11 +212,22 @@ export default {
       this.tasks.push(completeTask);
       this.dialog = false;
       this.taskName = "";
+      this.taskDescription = "";
       this.saveMsg = true;
     },
 
-    editTask() {
-      this.tasks[index].name.splice();
+    editTask(index) {
+      this.tasks.splice(index, 1);
+      const editTask = {
+        name: this.taskNameEdit,
+        description: this.taskDescriptionEdit,
+      };
+
+      this.tasks.push(editTask);
+      this.taskNameEdit = "";
+      this.taskDescriptionEdit = "";
+      this.editMsg = true;
+      this.edit = false;
     },
 
     removeTask(index) {
