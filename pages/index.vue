@@ -4,13 +4,17 @@
       <v-container class="mt-10">
         <v-card elevation="2" class="mx-auto" max-width="344" shaped>
           <v-card-title>Ma To Do List</v-card-title>
-          <v-card-subtitle v-if="tasks.length === 0">Votre liste est vide</v-card-subtitle>
+          <v-card-subtitle v-if="tasks.length === 0"
+            >Votre liste est vide</v-card-subtitle
+          >
           <v-list dense>
             <v-list-item-group>
               <!-- Pour chaque task dans mon tableau de tasks[] // On l'a appelé task, mais on aurait pu l'appeler tache-->
               <v-list-item v-for="(task, index) in tasks" :key="index">
                 <v-list-item-content>
-                  <v-list-item-title class="font-weight-black">{{ task.name }} </v-list-item-title>
+                  <v-list-item-title class="font-weight-black"
+                    >{{ task.name }}
+                  </v-list-item-title>
                   <v-list-item-subtitle>{{
                     task.description
                   }}</v-list-item-subtitle>
@@ -22,7 +26,8 @@
                     class="mt-5"
                     @change="archiveTask(task, index)"
                   ></v-checkbox>
-                  <v-btn icon
+                  <v-btn
+                    icon
                     rounded
                     dark
                     @click="openEditorDialog(task, index)"
@@ -51,47 +56,19 @@
 
           <!-- Création tâches-->
           <v-dialog v-model="dialog" max-width="400">
-            <v-card>
-              <v-card-title>Mon formulaire</v-card-title>
-              <v-form>
-                <v-container>
-                  <v-row justify="center">
-                    <v-col cols="10">
-                      <v-text-field
-                        v-model="taskName"
-                        label="Nom de la tâche"
-                        :counter="100"
-                        required
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="10" justify="center">
-                      <v-text-field
-                        v-model="taskDescription"
-                        label="Description de la tâche"
-                        :counter="200"
-                        required
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-form>
-              <v-card-actions class="mt-10">
-                <v-spacer></v-spacer>
-
-                <v-btn color="red darken-1" text @click="dialog = false">
-                  Annuler
-                </v-btn>
-
-                <v-btn color="green darken-1" text @click="addTask">
-                  Enregistrer
-                </v-btn>
-              </v-card-actions>
-            </v-card>
+            <Form
+                  title="Créer une tâche"
+                  @save="addTask"
+            ></Form>
           </v-dialog>
 
           <!-- Modification tâches-->
           <v-dialog v-model="edit" max-width="400">
-            <Form title="Modifier mon formulaire" :task="editingTask" @save="editTask"></Form>
+            <Form
+              title="Modifier mon formulaire"
+              :task="editingTask"
+              @save="editTask"
+            ></Form>
           </v-dialog>
 
           <!-- Message tâche enregistrée-->
@@ -123,12 +100,7 @@
           <v-snackbar v-model="editMsg" :timeout="timeout">
             Votre tâche est bien modifiée
             <template v-slot:action="{ attrs }">
-              <v-btn
-                color="blue"
-                text
-                v-bind="attrs"
-                @click="editeMsg = false"
-              >
+              <v-btn color="blue" text v-bind="attrs" @click="editeMsg = false">
                 Fermer
               </v-btn>
             </template>
@@ -140,13 +112,12 @@
 </template>
 
 <script>
-
-import Form from '~/components/Form.vue'
+import Form from "~/components/Form.vue";
 
 export default {
   name: "indexTodoList",
 
-  components : {Form},
+  components: { Form },
 
   data() {
     return {
@@ -161,11 +132,12 @@ export default {
       editingTask: {},
       indexEditingTask: undefined,
       tasksArchive: [],
+      timeout: 2000,
     };
   },
 
   methods: {
-    addTask() {
+    addTask(completeTask) {
       // On veut prendre le contenu de taskName (qui se rempli grace au v-model dans la dialog)
       // Pour le mettre dans notre tableau de tasks qui est initialement vide, apres avoir cliqué sur enregistré
       // Notre taskname est => this.taskName
@@ -180,13 +152,12 @@ export default {
       // 1:
       // ]
 
-      const completeTask = {
-        name: this.taskName,
-        description: this.taskDescription,
-        isArchive: false,
-      };
+      // dans ConpleteTask il y a un object { nom: 'lenomdetatache', description: 'desc' }
+      // Envoye via Form avec le emit.
+      // On déverse completeTask dans un nouvel object (imaginer un pichet qui rempli un autre ppichet) tout en lui ajoutant une nouvelle propriété
+      // Pouyr pouvoir definir isArchive a false par default a la creation d'une tache
 
-      this.tasks.push(completeTask);
+      this.tasks.push({...completeTask, isArchive: false});
       this.dialog = false;
       this.taskName = "";
       this.taskDescription = "";
@@ -195,19 +166,13 @@ export default {
 
     openEditorDialog(task, index) {
       this.editingTask = task;
-      this.indexEditingTask = index
+      this.indexEditingTask = index;
       this.edit = true;
     },
 
     editTask(task) {
-      //this.tasks.splice(this.indexEditingTask, 1, task);
-      //this.tasks[this.indexEditingTask]=task;
-      //this.$set(this.tasks[this.indexEditingTask])
-
-      const index = this.tasks.indexOf(this.editingTask);
-
-      this.tasks.splice(index, 1, task);
-
+      // Ici on remplace a l'index donnee par task (qui vient de composant Form, grace au emit)
+      this.tasks.splice(this.indexEditingTask, 1, {...task});
       this.editMsg = true;
       this.edit = false;
       this.editingTask = {};
@@ -216,18 +181,17 @@ export default {
 
     removeTask(index) {
       this.tasks.splice(index, 1);
-      this.deleteMsg = true; 
+      this.deleteMsg = true;
     },
 
     archiveTask(task) {
       if (task.isArchive === true) {
         this.tasksArchive.push(task);
       } else {
-        const indexArchive = this.tasksArchive.indexOf(task)
-        this.tasksArchive.splice(indexArchive, 1)
+        const indexArchive = this.tasksArchive.indexOf(task);
+        this.tasksArchive.splice(indexArchive, 1);
       }
-      
     }
-  },
+  }
 };
 </script>
