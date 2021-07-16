@@ -91,44 +91,7 @@
 
           <!-- Modification tâches-->
           <v-dialog v-model="edit" max-width="400">
-            <v-card>
-              <v-card-title>Modifier mon formulaire</v-card-title>
-              <v-form>
-                <v-container>
-                  <v-row justify="center">
-                    <v-col cols="10">
-                      <v-text-field
-                        @input="editingTask.name=$event"
-                        label="Nom de la tâche"
-                        :value="editingTask.name"
-                        :counter="100"
-                        required
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="10" justify="center">
-                      <v-text-field
-                        @input="editingTask.description=$event"
-                        label="Description de la tâche"
-                        :value="editingTask.description"
-                        :counter="200"
-                        required
-                      ></v-text-field>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-form>
-              <v-card-actions class="mt-10">
-                <v-spacer></v-spacer>
-
-                <v-btn color="red darken-1" text @click="edit = false">
-                  Annuler
-                </v-btn>
-
-                <v-btn color="green darken-1" text @click="editTask(editingTask)">
-                  Enregistrer
-                </v-btn>
-              </v-card-actions>
-            </v-card>
+            <Form title="Modifier mon formulaire" :task="editingTask" @save="editTask"></Form>
           </v-dialog>
 
           <!-- Message tâche enregistrée-->
@@ -177,8 +140,13 @@
 </template>
 
 <script>
+
+import Form from '~/components/Form.vue'
+
 export default {
   name: "indexTodoList",
+
+  components : {Form},
 
   data() {
     return {
@@ -231,14 +199,19 @@ export default {
       this.edit = true;
     },
 
-    editTask() {
-      this.tasks.splice(this.indexEditingTask, 1, this.editingTask);
+    editTask(task) {
+      //this.tasks.splice(this.indexEditingTask, 1, task);
+      //this.tasks[this.indexEditingTask]=task;
+      //this.$set(this.tasks[this.indexEditingTask])
+
+      const index = this.tasks.indexOf(this.editingTask);
+
+      this.tasks.splice(index, 1, task);
 
       this.editMsg = true;
       this.edit = false;
       this.editingTask = {};
       this.indexEditingTask = undefined;
-
     },
 
     removeTask(index) {
@@ -246,11 +219,12 @@ export default {
       this.deleteMsg = true; 
     },
 
-    archiveTask(task, index) {
+    archiveTask(task) {
       if (task.isArchive === true) {
         this.tasksArchive.push(task);
       } else {
-        this.tasksArchive.splice(index, 1)
+        const indexArchive = this.tasksArchive.indexOf(task)
+        this.tasksArchive.splice(indexArchive, 1)
       }
       
     }
