@@ -4,6 +4,7 @@
       <v-container class="mt-10">
         <v-card elevation="2" class="mx-auto" max-width="344" shaped>
           <v-card-title>Ma To Do List</v-card-title>
+          <v-card-subtitle v-if="tasks.length === 0">Votre liste est vide</v-card-subtitle>
           <v-list dense>
             <v-list-item-group>
               <!-- Pour chaque task dans mon tableau de tasks[] // On l'a appelé task, mais on aurait pu l'appeler tache-->
@@ -16,13 +17,15 @@
                 </v-list-item-content>
                 <v-card-actions>
                   <v-checkbox
+                    v-model="task.isArchive"
                     color="success"
                     class="mt-5"
+                    @change="archiveTask(task, index)"
                   ></v-checkbox>
                   <v-btn icon
                     rounded
                     dark
-                    @click="edit = true"
+                    @click="openEditorDialog(task, index)"
                   >
                     <v-icon color="orange" right>mdi-pencil</v-icon>
                   </v-btn>
@@ -95,16 +98,18 @@
                   <v-row justify="center">
                     <v-col cols="10">
                       <v-text-field
-                        v-model="taskNameEdit"
+                        @input="editingTask.name=$event"
                         label="Nom de la tâche"
+                        :value="editingTask.name"
                         :counter="100"
                         required
                       ></v-text-field>
                     </v-col>
                     <v-col cols="10" justify="center">
                       <v-text-field
-                        v-model="taskDescriptionEdit"
+                        @input="editingTask.description=$event"
                         label="Description de la tâche"
+                        :value="editingTask.description"
                         :counter="200"
                         required
                       ></v-text-field>
@@ -119,7 +124,7 @@
                   Annuler
                 </v-btn>
 
-                <v-btn color="green darken-1" text @click="editTask(index)">
+                <v-btn color="green darken-1" text @click="editTask(editingTask)">
                   Enregistrer
                 </v-btn>
               </v-card-actions>
@@ -153,7 +158,7 @@
 
           <!-- Message tâche modifiée-->
           <v-snackbar v-model="editMsg" :timeout="timeout">
-            Votre tâche est bien supprimée
+            Votre tâche est bien modifiée
             <template v-slot:action="{ attrs }">
               <v-btn
                 color="blue"
@@ -185,8 +190,9 @@ export default {
       deleteMsg: false,
       editMsg: false,
       edit: false,
-      taskNameEdit: "",
-      taskDescriptionEdit: "",
+      editingTask: {},
+      indexEditingTask: undefined,
+      tasksArchive: [],
     };
   },
 
@@ -209,6 +215,7 @@ export default {
       const completeTask = {
         name: this.taskName,
         description: this.taskDescription,
+        isArchive: false,
       };
 
       this.tasks.push(completeTask);
@@ -218,25 +225,35 @@ export default {
       this.saveMsg = true;
     },
 
-    editTask(index) {
-      this.tasks.splice(index, 1);
+    openEditorDialog(task, index) {
+      this.editingTask = task;
+      this.indexEditingTask = index
+      this.edit = true;
+    },
 
-      const editTask = {
-        name: this.taskNameEdit,
-        description: this.taskDescriptionEdit,
-      };
+    editTask() {
+      this.tasks.splice(this.indexEditingTask, 1, this.editingTask);
 
-      this.tasks.push(editTask);
-      this.taskNameEdit = "";
-      this.taskDescriptionEdit = "";
       this.editMsg = true;
       this.edit = false;
+      this.editingTask = {};
+      this.indexEditingTask = undefined;
+
     },
 
     removeTask(index) {
       this.tasks.splice(index, 1);
-      this.deleteMsg = true;
+      this.deleteMsg = true; 
     },
+
+    archiveTask(task, index) {
+      if (task.isArchive === true) {
+        this.tasksArchive.push(task);
+      } else {
+        this.tasksArchive.splice(index, 1)
+      }
+      
+    }
   },
 };
 </script>
