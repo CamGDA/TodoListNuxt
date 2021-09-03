@@ -74,11 +74,9 @@
           <!-- Message tâche enregistrée-->
           <v-snackbar v-model="saveMsg" :timeout="timeout">
             Votre tâche est bien enregistrée
-            <template v-slot:action="{ attrs }">
-              <v-btn color="blue" text v-bind="attrs" @click="saveMsg = false">
-                Fermer
-              </v-btn>
-            </template>
+             <Snackbar>
+
+            </Snackbar>
           </v-snackbar>
 
           <!-- Message tâche supprimée-->
@@ -113,11 +111,12 @@
 
 <script>
 import Form from "~/components/Form.vue";
+import Snackbar from "~/components/Snackbar.vue";
 
 export default {
   name: "indexTodoList",
 
-  components: { Form },
+  components: { Form, Snackbar },
 
   data() {
     return {
@@ -125,9 +124,9 @@ export default {
       taskName: "",
       taskDescription: "",
       tasks: [],
-      saveMsg: false,
-      deleteMsg: false,
       editMsg: false,
+      deletetMsg: false,
+      saveMsg: false,
       edit: false,
       editingTask: {},
       indexEditingTask: undefined,

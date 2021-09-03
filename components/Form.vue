@@ -68,7 +68,6 @@ export default {
   },
   methods: {
     save() {
-      console.log("emit");
       this.$emit("save", this.taskToSave);
       this.$refs.form.reset();
     }
