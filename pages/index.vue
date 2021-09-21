@@ -9,7 +9,6 @@
           >
           <v-list dense>
             <v-list-item-group>
-              <!-- Pour chaque task dans mon tableau de tasks[] // On l'a appelé task, mais on aurait pu l'appeler tache-->
               <v-list-item v-for="(task, index) in tasks" :key="index">
                 <v-list-item-content>
                   <v-list-item-title class="font-weight-black"
@@ -54,7 +53,6 @@
             </v-row>
           </v-card-actions>
 
-          <!-- Création tâches-->
           <v-dialog v-model="dialog" max-width="400">
             <Form
                   title="Créer une tâche"
@@ -62,7 +60,6 @@
             ></Form>
           </v-dialog>
 
-          <!-- Modification tâches-->
           <v-dialog v-model="edit" max-width="400">
             <Form
               title="Modifier mon formulaire"
@@ -71,7 +68,6 @@
             ></Form>
           </v-dialog>
 
-          <!-- Message tâche enregistrée-->
           <v-snackbar v-model="saveMsg" :timeout="timeout">
             Votre tâche est bien enregistrée
              <Snackbar>
@@ -79,7 +75,6 @@
             </Snackbar>
           </v-snackbar>
 
-          <!-- Message tâche supprimée-->
           <v-snackbar v-model="deleteMsg" :timeout="timeout">
             Votre tâche est bien supprimée
             <template v-slot:action="{ attrs }">
@@ -94,7 +89,6 @@
             </template>
           </v-snackbar>
 
-          <!-- Message tâche modifiée-->
           <v-snackbar v-model="editMsg" :timeout="timeout">
             Votre tâche est bien modifiée
             <template v-slot:action="{ attrs }">
@@ -137,24 +131,6 @@ export default {
 
   methods: {
     addTask(completeTask) {
-      // On veut prendre le contenu de taskName (qui se rempli grace au v-model dans la dialog)
-      // Pour le mettre dans notre tableau de tasks qui est initialement vide, apres avoir cliqué sur enregistré
-      // Notre taskname est => this.taskName
-
-      // Un tableau d'objet :
-      // tasks[
-      // 0: {
-      //    id: 0
-      //    name: 'coucou',
-      //    description: 'description'
-      // }
-      // 1:
-      // ]
-
-      // dans ConpleteTask il y a un object { nom: 'lenomdetatache', description: 'desc' }
-      // Envoye via Form avec le emit.
-      // On déverse completeTask dans un nouvel object (imaginer un pichet qui rempli un autre ppichet) tout en lui ajoutant une nouvelle propriété
-      // Pouyr pouvoir definir isArchive a false par default a la creation d'une tache
 
       this.tasks.push({...completeTask, isArchive: false});
       this.dialog = false;
@@ -170,7 +146,6 @@ export default {
     },
 
     editTask(task) {
-      // Ici on remplace a l'index donnee par task (qui vient de composant Form, grace au emit)
       this.tasks.splice(this.indexEditingTask, 1, {...task});
       this.editMsg = true;
       this.edit = false;

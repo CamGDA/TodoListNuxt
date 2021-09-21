@@ -5,9 +5,6 @@
       <v-container>
         <v-row justify="center">
           <v-col cols="10">
-            <!-- @input c'est l'evenement que mon champ ecoute. Par exemple quand j'appui sur la lettre A.  -->
-            <!-- Avec @input on modifie notre object taskToSave (qui a la toute base etait pareil que task) -->
-            <!-- :value c'est la valeur par defaut du champ quand il est prerempli (notamment pour la modification) -->
             <v-text-field
               v-model="taskToSave.name"
               label="Nom de la tâche"
@@ -44,7 +41,6 @@
 export default {
   name: "Form",
 
-  // Ce dont le composant a besoin pour marcher
   props: {
     title: "",
     task: {}
@@ -52,17 +48,14 @@ export default {
 
   data() {
     return {
-      taskToSave: {}
+      taskToSave: {},
     };
   },
-  // Watcher
-  // Surveille this.task et si ca bouge, tu me gardes la nouvelle valeur (val) et on la met dans taskToSave
   watch: {
     task: function(val, oldval) {
       this.taskToSave = { ...val };
     }
   },
-  // Ne se declenche qu'en chargement de la page donc 1 fois. (donc si on rechange de tache, ca ne marche pas)
   created() {
     Object.assign(this.taskToSave, this.task || {});
   },
